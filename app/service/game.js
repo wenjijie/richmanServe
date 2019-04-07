@@ -105,6 +105,7 @@ module.exports = class extends Service {
             console.log('ffff: ', colors)
             console.log('roomInfo: ', roomInfo)
             app.redis.hmset(config.redis.prefix + 'room-' + roomId, roomInfo)
+            app.redis.expire(config.redis.prefix + 'room-' + roomId, 60*60*24*3);
             // app.model.game
 
             return this.success({

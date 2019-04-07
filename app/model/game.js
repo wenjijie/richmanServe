@@ -11,6 +11,7 @@ module.exports = app => {
       initMoney: { type: Number, required: true },
       players: { type: Object, required: true },
       area: { type: Object, required: true },
+      result: { type: Object, required: true }
     },
     {
       timestamps: {

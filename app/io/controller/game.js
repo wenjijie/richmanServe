@@ -4,111 +4,6 @@ const uuid = require('uuid');
 const Controller = require('egg').Controller;
 
 module.exports = class extends Controller {
-    // async test() {
-    //     console.log('test -----------------')
-    //     const { ctx, app, config } = this;
-    //     const message = ctx.args[0] || {};
-    //     try {
-    //         let userInfo = await app.redis.hgetall(config.redis.prefix + 'token-' + message.token);
-    //         console.log('user111: ', userInfo)
-    //         let roomId = '336';
-    //         // ctx.socket.join(roomId);
-    //         let colors = ['red', 'yellow', 'orange', 'green', 'blue', 'purple', 'saddlebrown', 'silver'];
-    //         let random = Math.floor(Math.random() * colors.length) <= colors.length - 1 ? Math.floor(Math.random() * colors.length) : colors.length - 1;
-    //         colors.splice(random, 1);
-    //         console.log(colors)
-    //         let area = config.country;
-    //         for (let i in area) {
-    //             area[i].owner = '';
-    //             area[i].rank = 0;
-    //         }
-
-    //         let roomInfo = {
-    //             name: message.name,
-    //             userNum: 1,
-    //             max: message.max,
-    //             status: '等待',
-    //             colors: colors,
-    //             playerIds: [userInfo._id],
-    //             currentRound: 0,
-    //             currentStatus: 'dice',  // 等待掷骰子(dice)、等待玩家操作(oper)
-    //             initMoney: message.money,
-    //             players: JSON.stringify({
-    //                 [userInfo._id]: {
-    //                     username: userInfo.username,
-    //                     step: 0,
-    //                     money: message.money,
-    //                     color: colors[random],
-    //                     position: {
-    //                         x: 91.67,
-    //                         y: 85.815
-    //                     },
-    //                     area: config.country[0],
-    //                     createdAt: userInfo.createdAt
-    //                 }
-    //             }),
-    //             area: JSON.stringify(area)
-    //         }
-    //         console.log('aaa" ', colors[random])
-    //         console.log('roomInfo: ', roomInfo)
-    //         app.redis.hmset(config.redis.prefix + 'room-' + roomId, roomInfo)
-    //     } catch (error) {
-    //         app.logger.error(error);
-    //     }
-    // }
-
-    // /**
-    //  * 加入房间
-    //  */
-    // async joinRoom() {
-    //     console.log('====================================')
-    //     console.log('joinRoom')
-    //     const { ctx, app, config } = this;
-    //     const message = ctx.args[0] || {};
-    //     try {
-    //         const nsp = app.io.of('/');
-    //         let userInfo = await app.redis.hgetall(config.redis.prefix + 'token-' + message.token);
-    //         console.log('userss: ', userInfo);
-    //         let roomInfo = await app.redis.hgetall(message.roomId)
-    //         if (!ctx.helper.isEmpty(roomInfo) && !ctx.helper.isEmpty(roomInfo.players) && roomInfo.status === '等待') {
-    //             let players = JSON.parse(roomInfo.players);
-    //             if (!ctx.helper.isEmpty(userInfo._id) && ctx.helper.isEmpty(players[userInfo._id])) {
-    //                 // ctx.socket.join(message.roomId);
-    //                 let colors = roomInfo.colors.split(',');
-    //                 console.log('cccc: ', colors)
-    //                 let random = Math.floor(Math.random() * colors.length) <= colors.length - 1 ? Math.floor(Math.random() * colors.length) : colors.length - 1;
-    //                 colors.splice(random, 1);
-    //                 console.log('cccc: ', colors)
-    //                 console.log('ran:', random);
-    //                 players[userInfo._id] = {
-    //                     username: userInfo.username,
-    //                     step: 0,
-    //                     money: roomInfo.initMoney,
-    //                     color: colors[random],
-    //                     position: {
-    //                         x: 91.67,
-    //                         y: 85.815
-    //                     },
-    //                     area: config.country[0],
-    //                     createdAt: userInfo.createdAt
-    //                 }
-    //                 let playerIds = roomInfo.playerIds += ',' + userInfo._id;
-    //                 await app.redis.hmset(message.roomId, { players: JSON.stringify(players), playerIds: playerIds });
-    //             }
-    //         }else {
-    //             nsp.emit(message.roomId + '-joinRoomBack', {
-    //                 _id: userInfo._id,
-    //                 nextPlayer: playerIds[roomInfo.currentRound],
-    //                 result: 'noRound',
-    //                 throughStart: false
-    //             })
-    //         }
-    //         // app.redis.hmset(config.redis.prefix + 'room-' + message.roomId, roomInfo)
-    //     } catch (error) {
-    //         app.logger.error(error);
-    //     }
-    // }
-
     /**
      * 扔骰子
      */
@@ -137,6 +32,7 @@ module.exports = class extends Controller {
                         if (random === 7) {
                             random = 6;
                         }
+                        // random = 2;
 
                         // 更新信息
                         let before = players[userInfo._id].step;
@@ -147,19 +43,13 @@ module.exports = class extends Controller {
                         // 得到下一轮玩家id
                         while (true) {
                             roomInfo.currentRound = (Number(roomInfo.currentRound) + 1) % (playerIds.length);
-                            console.log('aaa: ', roomInfo.currentRound)
-                            console.log('eee: ', roomInfo.playerIds);
-                            console.log('ccc: ', roomInfo.playerIds.split(',')[roomInfo.currentRound])
-                            // console.log('bbb: ', players[roomInfo.playerIds.split(',')[roomInfo.currentRound]])
-                            console.log('fff: ', players[roomInfo.playerIds.split(',')[roomInfo.currentRound]].status)
                             if (players[roomInfo.playerIds.split(',')[roomInfo.currentRound]].status === 'normal') {
-                                console.log('正常通过')
                                 break;
                             }
                         }
                         const nsp = app.io.of('/');
 
-                        console.log('next: ', playerIds[roomInfo.currentRound])
+                        // console.log('next: ', playerIds[roomInfo.currentRound])
                         // 目的地区的影响（地皮、机会、命运、海洋、监狱、起点）
                         let result = {
                             _id: userInfo._id,
@@ -218,14 +108,14 @@ module.exports = class extends Controller {
                                     console.log('result: ', result);
                                     if (Number(players2[userInfo._id].money) + result.effect.effect > 0) {
                                         players2[userInfo._id].money = Number(players2[userInfo._id].money) + result.effect.effect;
-                                        // players2[result.area.owner].money += Number(result.area.income[result.area.rank]);
+                                        // players2[result.area.owner].money += Number(result.area.income[result.area.rank]);                                                                                                                          3
                                         result2 = 'moneyEnough'
                                     } else {
                                         // 现金依然不足
                                         // 依次出售拥有的房产直至现金足够为止
                                         for (let i in area2) {
                                             if (area2[i].owner == userInfo._id && area2[i].type == 'place') {
-                                                area2[i].houseId = i;
+                                                // area2[i].houseId = i;
                                                 sale.push(area2[i]);
                                                 let flag = false;
                                                 // 卖房
@@ -260,13 +150,14 @@ module.exports = class extends Controller {
 
                                         console.log('player2: ', players2);
                                         console.log('area2: ', area2);
-                                        // 更新房产、资金
-                                        await app.redis.hmset(message.roomId, { players: JSON.stringify(players2), area: JSON.stringify(area2) });
+
                                         // 广播点数和目的地区信息
                                         // console.log('res: ', result)
                                         result2 = 'autoSaleHouse';
                                     }
 
+                                    // 更新房产、资金
+                                    await app.redis.hmset(message.roomId, { players: JSON.stringify(players2), area: JSON.stringify(area2) });
                                     nsp.emit(message.roomId + '-needSaleHouseBack', {
                                         _id: userInfo._id,
                                         result: result2,
@@ -294,9 +185,6 @@ module.exports = class extends Controller {
                                     }
                                 }
                             }
-
-                            // console.log('chance: ', result.effect);
-
                         } else if (result.area.type === 'prison') {
                             result.effect = {
                                 text: '入狱',
@@ -304,21 +192,13 @@ module.exports = class extends Controller {
                                 effect: 0
                             }
                         } else if (result.area.type === 'place') {
-                            // console.log('area: ', result.area.owner)
                             if (ctx.helper.isEmpty(result.area.owner)) {
-                                // console.log('place-1', roomInfo.currentRound)
                                 result.result = 'buy';
-                                // console.log('--- buy')
-                                // console.log('be: ', result.nextPlayer);
-                                // console.log('beR: ', beforeRound);
                                 let afterRound = roomInfo.currentRound;
                                 roomInfo.currentRound = beforeRound;
                                 result.nextPlayer = playerIds[roomInfo.currentRound];
-                                // console.log('place-2', roomInfo.currentRound);
-                                // console.log('next: ', result.nextPlayer);
 
                                 // 推送够买升级倒计时
-                                // let countDown = 20;
                                 // 标识倒计时，用来消除倒计时
                                 result.orderId = uuid.v1();
                                 countDown(20, result.orderId, userInfo._id, message.roomId, playerIds[afterRound], afterRound, app);
@@ -328,14 +208,11 @@ module.exports = class extends Controller {
                                 roomInfo.currentRound = beforeRound;
                                 result.nextPlayer = playerIds[roomInfo.currentRound];
 
-                                // let countDown = 20;
                                 result.orderId = uuid.v1();
                                 countDown(20, result.orderId, userInfo._id, message.roomId, playerIds[afterRound], afterRound, app);
                             } else {
                                 result.result = 'pay';
                                 result.payFor = result.area.owner;
-                                console.log('rank: ', result.area.rank)
-                                console.log('收入', result.area.income);
 
                                 let houseMoey = calcHouseMoey(area, userInfo._id);
                                 if (Number(players[userInfo._id].money) > Number(result.area.income[result.area.rank])) {
@@ -359,9 +236,16 @@ module.exports = class extends Controller {
                                         let result2 = '';
                                         let sale = [];
                                         if (Number(players2[userInfo._id].money) > Number(result.area.income[result.area.rank])) {
-                                            console.log('现金充足');
+                                            // 当前现金已足够支付
+                                            // console.log('现金充足');
+                                            // console.log(result.area.income[result.area.rank]);
+                                            // console.log(typeof result.area.income[result.area.rank]);
+                                            // console.log('付款方1', players2[userInfo._id].money);
+                                            // console.log('收款方1', players2[result.area.owner].money);
                                             players2[userInfo._id].money -= result.area.income[result.area.rank];
                                             players2[result.area.owner].money += Number(result.area.income[result.area.rank]);
+                                            // console.log('付款方2', players2[userInfo._id].money);
+                                            // console.log('收款方2', players2[result.area.owner].money);
                                             result2 = 'moneyEnough'
                                         } else {
                                             console.log('现金依然不足');
@@ -369,7 +253,7 @@ module.exports = class extends Controller {
                                             // 依次出售拥有的房产直至现金足够为止
                                             for (let i in area2) {
                                                 if (area2[i].owner == userInfo._id && area2[i].type == 'place') {
-                                                    area2[i].houseId = i;
+                                                    // area2[i].houseId = i;
                                                     sale.push(area2[i]);
                                                     console.log('=========\n卖: ', area2[i]);
                                                     debugger;
@@ -424,6 +308,7 @@ module.exports = class extends Controller {
                                             result2 = 'autoSaleHouse';
                                         }
 
+                                        await app.redis.hmset(message.roomId, { players: JSON.stringify(players2), area: JSON.stringify(area2) });
                                         nsp.emit(message.roomId + '-needSaleHouseBack', {
                                             _id: userInfo._id,
                                             result: result2,
@@ -625,7 +510,7 @@ module.exports = class extends Controller {
                     username: userInfo.username,
                     result: result,
                     area: area,
-                    houseId: message.id,
+                    // houseId: message.id,
                     money: players[userInfo._id].money
                 })
             }

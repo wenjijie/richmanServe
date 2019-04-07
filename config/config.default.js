@@ -115,14 +115,21 @@ module.exports = appInfo => {
     whiteList: ['/login', '/signup', '/api/login', '/api/signup']
   }
 
+  // 坐标x以右为正方向，坐标y以下为正方向
   config.country = {
     0: {
+      id: 0,
       type: "start",
       country: "起点",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 91.67,
+        y: 85.815
+      }
     },
     1: {
+      id: 1,
       type: "place",
       country: "中国",
       price: 4000,
@@ -134,9 +141,14 @@ module.exports = appInfo => {
         5: 17000,
         6: 20000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 83.34,
+        y: 85.815
+      }
     },
     2: {
+      id: 2,
       type: "place",
       country: "日本",
       price: 1000,
@@ -148,15 +160,25 @@ module.exports = appInfo => {
         5: 4000,
         6: 5500
       },
-      upgradePrice: 5000
+      upgradePrice: 500,
+      position: {
+        x: 75.01,
+        y: 85.815
+      }
     },
     3: {
+      id: 3,
       type: "chance",
       country: "机会",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 66.68,
+        y: 85.815
+      }
     },
     4: {
+      id: 4,
       type: "place",
       country: "韩国",
       price: 1000,
@@ -168,9 +190,14 @@ module.exports = appInfo => {
         5: 4000,
         6: 5500
       },
-      upgradePrice: 500
+      upgradePrice: 500,
+      position: {
+        x: 58.35,
+        y: 85.815
+      }
     },
     5: {
+      id: 5,
       type: "place",
       country: "菲律宾",
       price: 600,
@@ -182,9 +209,14 @@ module.exports = appInfo => {
         5: 3200,
         6: 4500
       },
-      upgradePrice: 500
+      upgradePrice: 500,
+      position: {
+        x: 50.02,
+        y: 85.815
+      }
     },
     6: {
+      id: 6,
       type: "place",
       country: "印度",
       price: 1400,
@@ -196,15 +228,25 @@ module.exports = appInfo => {
         5: 6250,
         6: 7500
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 41.69,
+        y: 85.815
+      }
     },
     7: {
+      id: 7,
       type: "ocean",
       country: "太平洋",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 33.36,
+        y: 85.815
+      }
     },
     8: {
+      id: 8,
       type: "place",
       country: "伊朗",
       price: 2000,
@@ -216,9 +258,14 @@ module.exports = appInfo => {
         5: 8000,
         6: 10000
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 25.03,
+        y: 85.815
+      }
     },
     9: {
+      id: 9,
       type: "place",
       country: "沙特阿拉伯",
       price: 1800,
@@ -230,9 +277,14 @@ module.exports = appInfo => {
         5: 7500,
         6: 9500
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 16.7,
+        y: 85.815
+      }
     },
     10: {
+      id: 10,
       type: "place",
       country: "叙利亚",
       price: 3500,
@@ -244,9 +296,14 @@ module.exports = appInfo => {
         5: 13000,
         6: 15000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 8.37,
+        y: 85.815
+      }
     },
     11: {
+      id: 11,
       type: "place",
       country: "伊拉克",
       price: 1600,
@@ -258,9 +315,14 @@ module.exports = appInfo => {
         5: 7500,
         6: 9500
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 0.04,
+        y: 85.815
+      }
     },
     12: {
+      id: 12,
       type: "place",
       country: "土耳其",
       price: 3500,
@@ -272,15 +334,25 @@ module.exports = appInfo => {
         5: 13000,
         6: 15000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 0.04,
+        y: 71.53
+      }
     },
     13: {
+      id: 13,
       type: "fate",
       country: "命运",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 0.04,
+        y: 57.245
+      }
     },
     14: {
+      id: 14,
       type: "place",
       country: "俄罗斯",
       price: 1000,
@@ -292,15 +364,25 @@ module.exports = appInfo => {
         5: 4000,
         6: 5500
       },
-      upgradePrice: 500
+      upgradePrice: 500,
+      position: {
+        x: 0.04,
+        y: 42.96
+      }
     },
     15: {
+      id: 15,
       type: "chance",
       country: "机会",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 0.04,
+        y: 28.675
+      }
     },
     16: {
+      id: 16,
       type: "place",
       country: "英国",
       price: 2200,
@@ -312,15 +394,25 @@ module.exports = appInfo => {
         5: 8750,
         6: 10500
       },
-      upgradePrice: 1500
+      upgradePrice: 1500,
+      position: {
+        x: 0.04,
+        y: 14.39
+      }
     },
     17: {
+      id: 17,
       type: "ocean",
       country: "北极",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 0.04,
+        y: 0.105
+      }
     },
     18: {
+      id: 18,
       type: "place",
       country: "芬兰",
       price: 3200,
@@ -332,9 +424,14 @@ module.exports = appInfo => {
         5: 9750,
         6: 11500
       },
-      upgradePrice: 1500
+      upgradePrice: 1500,
+      position: {
+        x: 8.37,
+        y: 0.105
+      }
     },
     19: {
+      id: 19,
       type: "place",
       country: "丹麦",
       price: 2800,
@@ -346,9 +443,14 @@ module.exports = appInfo => {
         5: 10250,
         6: 12000
       },
-      upgradePrice: 1500
+      upgradePrice: 1500,
+      position: {
+        x: 16.7,
+        y: 0.105
+      }
     },
     20: {
+      id: 20,
       type: "place",
       country: "意大利",
       price: 1400,
@@ -360,15 +462,25 @@ module.exports = appInfo => {
         5: 6250,
         6: 7500
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 25.03,
+        y: 0.105
+      }
     },
     21: {
+      id: 21,
       type: "fate",
       country: "命运",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 33.36,
+        y: 0.105
+      }
     },
     22: {
+      id: 22,
       type: "place",
       country: "西班牙",
       price: 1400,
@@ -380,9 +492,14 @@ module.exports = appInfo => {
         5: 13000,
         6: 15000
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 41.69,
+        y: 0.105
+      }
     },
     23: {
+      id: 23,
       type: "place",
       country: "埃及",
       price: 1800,
@@ -394,9 +511,14 @@ module.exports = appInfo => {
         5: 7500,
         6: 9500
       },
-      upgradePrice: 1000
+      upgradePrice: 1000,
+      position: {
+        x: 50.02,
+        y: 0.105
+      }
     },
     24: {
+      id: 24,
       type: "place",
       country: "赞比亚",
       price: 600,
@@ -408,15 +530,25 @@ module.exports = appInfo => {
         5: 1600,
         6: 2500
       },
-      upgradePrice: 500
+      upgradePrice: 500,
+      position: {
+        x: 58.35,
+        y: 0.105
+      }
     },
     25: {
+      id: 25,
       type: "chance",
       country: "机会",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 66.68,
+        y: 0.105
+      }
     },
     26: {
+      id: 26,
       type: "place",
       country: "加拿大",
       price: 3500,
@@ -428,9 +560,14 @@ module.exports = appInfo => {
         5: 13000,
         6: 15000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 75.01,
+        y: 0.105
+      }
     },
     27: {
+      id: 27,
       type: "place",
       country: "美国",
       price: 3500,
@@ -442,9 +579,14 @@ module.exports = appInfo => {
         5: 13000,
         6: 15000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 83.34,
+        y: 0.105
+      }
     },
     28: {
+      id: 28,
       type: "place",
       country: "墨西哥",
       price: 1000,
@@ -456,9 +598,14 @@ module.exports = appInfo => {
         5: 4000,
         6: 5500
       },
-      upgradePrice: 500
+      upgradePrice: 500,
+      position: {
+        x: 91.67,
+        y: 0.105
+      }
     },
     29: {
+      id: 29,
       type: "place",
       country: "洪都拉斯",
       price: 1200,
@@ -470,15 +617,25 @@ module.exports = appInfo => {
         5: 4500,
         6: 6000
       },
-      upgradePrice: 1500
+      upgradePrice: 1500,
+      position: {
+        x: 91.67,
+        y: 14.39
+      }
     },
     30: {
+      id: 30,
       type: "fate",
       country: "命运",
       price: 0,
-      upgradePrice: 0
+      upgradePrice: 0,
+      position: {
+        x: 91.67,
+        y: 28.675
+      }
     },
     31: {
+      id: 31,
       type: "place",
       country: "巴拿马",
       price: 3200,
@@ -490,9 +647,14 @@ module.exports = appInfo => {
         5: 12000,
         6: 14000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 91.67,
+        y: 42.96
+      }
     },
     32: {
+      id: 32,
       type: "place",
       country: "巴西",
       price: 2600,
@@ -504,9 +666,14 @@ module.exports = appInfo => {
         5: 9750,
         6: 11500
       },
-      upgradePrice: 1500
+      upgradePrice: 1500,
+      position: {
+        x: 91.67,
+        y: 57.245
+      }
     },
     33: {
+      id: 33,
       type: "place",
       country: "澳大利亚",
       price: 3200,
@@ -518,7 +685,11 @@ module.exports = appInfo => {
         5: 12000,
         6: 14000
       },
-      upgradePrice: 2000
+      upgradePrice: 2000,
+      position: {
+        x: 91.67,
+        y: 71.53
+      }
     }
   }
 

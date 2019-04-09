@@ -16,12 +16,9 @@ module.exports = class extends Service {
             for (let i in roomIds) {
                 let room = await this.app.redis.hgetall(roomIds[i])
                 delete room.area;
-                // room.roomId = roomIds[i];
                 rooms.push(room);
             }
-            // if (!this.ctx.helper.isEmpty(rooms)) {
             return this.success(rooms);
-            // }
         } catch (error) {
             this.logger.error(error); //打印报错信息
             return this.fail(this.config.result.EXCEPTION, error.message);
@@ -35,7 +32,6 @@ module.exports = class extends Service {
     async getRoom(id) {
         try {
             let room = await this.app.redis.hgetall(id);
-            // console.log('room:', room)
             if (!this.ctx.helper.isEmpty(room)) {
                 return this.success(room);
             } else {
@@ -51,26 +47,21 @@ module.exports = class extends Service {
      * 创建房间
      */
     async createRoom(query) {
-        console.log('createRoom -----------------')
-        console.log('qqq： ', query);
         const {
             ctx,
             app,
             config
         } = this;
         try {
-            // let userInfo = await app.redis.hgetall(config.redis.prefix + 'token-' + message.token);
             let userInfo = await app.model.User.findById(ctx.state.userId);
             console.log('user111: ', userInfo)
             // 生成房间id
             let roomId = uuid.v1();;
-            // ctx.socket.join(roomId);
 
             // 代表玩家的颜色
             let colors = ['red', 'yellow', 'orange', 'green', 'blue', 'purple', 'saddlebrown', 'silver'];
             let random = Math.floor(Math.random() * colors.length) <= colors.length - 1 ? Math.floor(Math.random() * colors.length) : colors.length - 1;
             let color = (colors.splice(random, 1))[0];
-            console.log(colors)
             let area = config.country;
             for (let i in area) {
                 area[i].owner = '';
@@ -127,7 +118,6 @@ module.exports = class extends Service {
             roomInfo.area = JSON.parse(roomInfo.area);
 
             let re = await app.model.Game.create(roomInfo);
-            // console.log('re:', re)
             return this.success({
                 roomId: config.redis.prefix + 'room-' + roomId
             });
@@ -141,8 +131,6 @@ module.exports = class extends Service {
      * 加入房间
      */
     async joinRoom(roomId) {
-        console.log('====================================')
-        console.log('joinRoom')
         const {
             ctx,
             app,
@@ -150,24 +138,14 @@ module.exports = class extends Service {
         } = this;
         try {
             const nsp = app.io.of('/');
-            // let userInfo = await app.redis.hgetall(config.redis.prefix + 'token-' + message.token);
             let userInfo = await app.model.User.findById(ctx.state.userId);
-            console.log('userss: ', userInfo);
             let roomInfo = await app.redis.hgetall(roomId)
             if (!ctx.helper.isEmpty(roomInfo) && !ctx.helper.isEmpty(roomInfo.players)) {
-                console.log('111')
                 let players = JSON.parse(roomInfo.players);
-                // console.log('11111')
                 if (!ctx.helper.isEmpty(userInfo._id) && ctx.helper.isEmpty(players[userInfo._id]) && roomInfo.status === '等待') {
-                    console.log(roomInfo.userNum)
-                    // console.log(roomInfo.max)
-                    // console.log(Number(roomInfo.userNum) < Number(roomInfo.max))
                     if (Number(roomInfo.userNum) < Number(roomInfo.max)) {
-                        // ctx.socket.join(message.roomId);
                         let colors = roomInfo.colors.split(',');
-                        console.log('cccc: ', colors)
                         let random = Math.floor(Math.random() * colors.length) <= colors.length - 1 ? Math.floor(Math.random() * colors.length) : colors.length - 1;
-                        console.log('ran:', random);
                         let color = (colors.splice(random, 1))[0];
                         players[userInfo._id] = {
                             username: userInfo.username,
@@ -182,7 +160,6 @@ module.exports = class extends Service {
                             area: config.country[0],
                             createdAt: userInfo.createdAt
                         }
-                        console.log('afffff: ', colors)
                         let playerIds = roomInfo.playerIds += ',' + userInfo._id;
                         await app.redis.hmset(roomId, {
                             colors: colors,
@@ -207,7 +184,6 @@ module.exports = class extends Service {
                                 }
                             }
                         })
-                        console.log('res: ', res)
 
                         nsp.emit(roomId + '-joinRoomBack', {
                             user: userInfo,
@@ -230,7 +206,6 @@ module.exports = class extends Service {
             } else {
                 return this.fail(this.config.result.NONE_FOUND, '房间不存在');
             }
-            // app.redis.hmset(config.redis.prefix + 'room-' + message.roomId, roomInfo)
         } catch (error) {
             this.logger.error(error);
             return this.fail(this.config.result.EXCEPTION, error.message);
@@ -241,8 +216,6 @@ module.exports = class extends Service {
      * 开始游戏
      */
     async startGame(roomId) {
-        console.log('====================================')
-        console.log('startGame')
         const {
             ctx,
             app,
@@ -250,23 +223,19 @@ module.exports = class extends Service {
         } = this;
         try {
             const nsp = app.io.of('/');
-            // let userInfo = await app.redis.hgetall(config.redis.prefix + 'token-' + message.token);
             let userInfo = await app.model.User.findById(ctx.state.userId);
-            // console.log('userss: ', userInfo);
             let roomInfo = await app.redis.hgetall(roomId)
-            // console.log('room: ', roomInfo)
             if (!ctx.helper.isEmpty(roomInfo) && !ctx.helper.isEmpty(roomInfo.players) && roomInfo.status === '等待') {
                 let players = JSON.parse(roomInfo.players);
                 if (!ctx.helper.isEmpty(userInfo._id) && !ctx.helper.isEmpty(players[userInfo._id]) && roomInfo.owner == userInfo._id) {
                     await app.redis.hmset(roomId, {
                         status: '游戏中'
                     });
-                    let aaa = await app.model.Game.update({
+                    await app.model.Game.update({
                         roomId: roomId
                     }, {
                         status: '游戏中'
                     });
-                    console.log('aaa: ', aaa)
                     nsp.emit(roomId + '-startGameBack', {
                         user: userInfo._id,
                         type: 'start'
@@ -288,8 +257,6 @@ module.exports = class extends Service {
      * 获取当前玩家拥有的地域信息
      */
     async getCurrentAreas(roomId) {
-        console.log('====================================')
-        console.log('getCurrentAreas')
         const {
             ctx,
             app,
@@ -322,8 +289,6 @@ module.exports = class extends Service {
      * 获取游戏结果
      */
     async getGameResult(roomId) {
-        console.log('====================================')
-        console.log('getGameResult')
         try {
             let roomInfo = await this.app.model.Game.findOne({
                 roomId: roomId

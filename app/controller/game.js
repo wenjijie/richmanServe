@@ -6,7 +6,6 @@ const { Controller } = require('egg');
 module.exports = class extends Controller {
     async getRooms() {
         const { ctx, service } = this;
-        // const { id } = ctx.params || {};
         return ctx.body = await service.game.getRooms();
     }
     async getRoom() {

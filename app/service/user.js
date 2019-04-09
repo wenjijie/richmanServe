@@ -112,12 +112,6 @@ module.exports = class extends Service {
    */
   async getGameInfo(userId) {
     try {
-      // let games = await this.ctx.model.Game.find({
-      //   'players.userId': this.app.mongoose.Types.ObjectId(userId)
-      // }, {
-      //   area: 0,
-      //   colors: 0
-      // });
       let games = await this.ctx.model.Game.aggregate()
         .unwind({
           path: '$players'

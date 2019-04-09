@@ -7,8 +7,6 @@ module.exports = class extends Controller {
      * 扔骰子
      */
     async throwDice() {
-        console.log('====================================')
-        console.log('throwDice')
         const {
             ctx,
             app,
@@ -17,7 +15,6 @@ module.exports = class extends Controller {
         const message = ctx.args[0] || {};
         try {
             let userInfo = await app.redis.hgetall(config.redis.prefix + 'token-' + message.token);
-            // console.log('users：', userInfo);
             let roomInfo = await app.redis.hgetall(message.roomId)
             if (!ctx.helper.isEmpty(roomInfo) && !ctx.helper.isEmpty(roomInfo.players)) {
                 let players = JSON.parse(roomInfo.players);
@@ -31,7 +28,6 @@ module.exports = class extends Controller {
                         if (random === 7) {
                             random = 6;
                         }
-                        // random = 2;
 
                         // 更新信息
                         let before = players[userInfo._id].step;
@@ -72,16 +68,12 @@ module.exports = class extends Controller {
                                 if (randomChance === Object.keys(config.chances).length) {
                                     randomChance = Object.keys(config.chances).length - 1;
                                 }
-                                // console.log('sss: ', config.chances);
-                                // console.log('ran: ', randomChance);
                                 result.effect = config.chances[randomChance];
                             } else {
                                 let randomFate = Math.floor(Math.random() * Object.keys(config.chances).length) + 1;
                                 if (randomFate === Object.keys(config.chances).length) {
                                     randomFate = Object.keys(config.chances).length - 1;
                                 }
-                                // console.log('sss: ', config.chances);
-                                // console.log('ran: ', randomFate);
                                 result.effect = config.fates[randomFate];
                             }
 
@@ -106,17 +98,14 @@ module.exports = class extends Controller {
 
                                     let result2 = '';
                                     let sale = [];
-                                    console.log('result: ', result);
                                     if (Number(players2[userInfo._id].money) + result.effect.effect > 0) {
                                         players2[userInfo._id].money = Number(players2[userInfo._id].money) + result.effect.effect;
-                                        // players2[result.area.owner].money += Number(result.area.income[result.area.rank]);                                                                                                                          3
                                         result2 = 'moneyEnough'
                                     } else {
                                         // 现金依然不足
                                         // 依次出售拥有的房产直至现金足够为止
                                         for (let i in area2) {
                                             if (area2[i].owner == userInfo._id && area2[i].type == 'place') {
-                                                // area2[i].houseId = i;
                                                 sale.push(area2[i]);
                                                 let flag = false;
                                                 // 卖房
@@ -149,11 +138,7 @@ module.exports = class extends Controller {
                                             }
                                         }
 
-                                        console.log('player2: ', players2);
-                                        console.log('area2: ', area2);
-
                                         // 广播点数和目的地区信息
-                                        // console.log('res: ', result)
                                         result2 = 'autoSaleHouse';
                                     }
 
@@ -176,12 +161,10 @@ module.exports = class extends Controller {
                                 // 破产
                                 // 无力支付
                                 // 将房产全部变卖后所有资金给对方
-                                console.log('机会破产')
                                 result.result = 'nothingToPay';
                                 players[userInfo._id].money = -1;
                                 players[userInfo._id].status = 'bankrupt';
                                 roomInfo.aliveNum -= 1;
-                                // players[result.area.owner].money += Number(players[result.area.owner].money) + houseMoey;
                                 let res = await app.model.Game.update({
                                     roomId: roomInfo.roomId,
                                     'players.userId': app.mongoose.Types.ObjectId(userInfo._id)
@@ -190,7 +173,6 @@ module.exports = class extends Controller {
                                     'players.$.status': 'bankrupt',
                                     'players.$.rank': roomInfo.aliveNum + 1
                                 })
-                                console.log('rr: ', res)
 
                                 // 拥有的房产出售变为无主
                                 for (let i in area) {
@@ -252,53 +234,35 @@ module.exports = class extends Controller {
                                         let sale = [];
                                         if (Number(players2[userInfo._id].money) > Number(result.area.income[result.area.rank])) {
                                             // 当前现金已足够支付
-                                            // console.log('现金充足');
-                                            // console.log(result.area.income[result.area.rank]);
-                                            // console.log(typeof result.area.income[result.area.rank]);
-                                            // console.log('付款方1', players2[userInfo._id].money);
-                                            // console.log('收款方1', players2[result.area.owner].money);
                                             players2[userInfo._id].money -= result.area.income[result.area.rank];
                                             players2[result.area.owner].money += Number(result.area.income[result.area.rank]);
-                                            // console.log('付款方2', players2[userInfo._id].money);
-                                            // console.log('收款方2', players2[result.area.owner].money);
                                             result2 = 'moneyEnough'
                                         } else {
-                                            console.log('现金依然不足');
                                             // 现金依然不足
                                             // 依次出售拥有的房产直至现金足够为止
                                             for (let i in area2) {
                                                 if (area2[i].owner == userInfo._id && area2[i].type == 'place') {
                                                     // area2[i].houseId = i;
                                                     sale.push(area2[i]);
-                                                    console.log('=========\n卖: ', area2[i]);
                                                     debugger;
                                                     let flag = false;
                                                     // 卖房
                                                     for (let j = Number(area2[i].rank) - 1; j > 0; j--) {
-                                                        console.log('卖第', area2[i].rank - 1, '层楼');
                                                         players2[userInfo._id].money += area2[i].upgradePrice / 2;
                                                         area2[i].rank = Number(area2[i].rank) - 1;
-                                                        console.log('--', area2[i])
                                                         if (Number(players2[userInfo._id].money) > Number(result.area.income[result.area.rank])) {
-                                                            console.log('卖楼够了')
-                                                            // players2[userInfo._id].money -= result.area.income[result.area.rank];
-                                                            // players2[result.area.owner].money += Number(result.area.income[result.area.rank]);
                                                             players2[userInfo._id].money -= result.area.income[result.area.rank];
                                                             players2[result.area.owner].money += Number(result.area.income[result.area.rank]);
                                                             flag = true;
                                                             break;
                                                         }
                                                     }
-                                                    console.log('flag: ', flag);
                                                     if (flag) {
                                                         // 钱已足够
                                                         break;
                                                     }
 
-                                                    console.log('area2.rank: ', area2[i]);
-                                                    console.log(Number(area2[i].rank) < 2)
                                                     if (Number(area2[i].rank) < 2) {
-                                                        console.log('卖掉土地： ', area2[i].country);
                                                         // 卖地
                                                         players2[userInfo._id].money += area2[i].price / 2;
                                                         area2[i].owner = '';
@@ -307,7 +271,6 @@ module.exports = class extends Controller {
 
                                                     if (Number(players2[userInfo._id].money) > Number(result.area.income[result.area.rank])) {
                                                         // 钱已足够
-                                                        console.log('卖地够了');
                                                         players2[userInfo._id].money -= result.area.income[result.area.rank];
                                                         players2[result.area.owner].money += Number(result.area.income[result.area.rank]);
                                                         break;
@@ -315,7 +278,6 @@ module.exports = class extends Controller {
                                                 }
                                             }
 
-                                            // await app.redis.hmset(message.roomId, { players: JSON.stringify(players2), area: JSON.stringify(area2) });
                                             result2 = 'autoSaleHouse';
                                         }
                                         // 更新房产、资金
@@ -339,7 +301,6 @@ module.exports = class extends Controller {
                                     // 破产
                                     // 无力支付
                                     // 将房产全部变卖后所有资金给对方
-                                    console.log('房地产破产')
                                     result.result = 'nothingToPay';
                                     players[userInfo._id].money = -1;
                                     players[result.area.owner].money += Number(players[result.area.owner].money) + houseMoey;
@@ -354,7 +315,6 @@ module.exports = class extends Controller {
                                         'players.$.status': 'bankrupt',
                                         'players.$.rank': roomInfo.aliveNum + 1
                                     })
-                                    console.log('res: ', res)
 
                                     // 拥有的房产出售变为无主
                                     for (let i in area) {
@@ -450,8 +410,6 @@ module.exports = class extends Controller {
      * 选择是否够买
      */
     async buyArea() {
-        console.log('====================================')
-        console.log('buyArea')
         const {
             ctx,
             app,
@@ -469,7 +427,6 @@ module.exports = class extends Controller {
                     if (playerIds[roomInfo.currentRound] === userInfo._id) {
                         let result = 'noBuy';
                         if (message.isBuy) {
-                            console.log('area: ', area[players[userInfo._id].step]);
                             if (area[players[userInfo._id].step].owner === '') {
                                 if (players[userInfo._id].money > area[players[userInfo._id].step].price) {
                                     area[players[userInfo._id].step].owner = userInfo._id;
@@ -491,16 +448,9 @@ module.exports = class extends Controller {
                                 result = 'isBought'
                             }
                         }
-                        // roomInfo.currentRound = (Number(roomInfo.currentRound) + 1) % (playerIds.length);
                         while (true) {
                             roomInfo.currentRound = (Number(roomInfo.currentRound) + 1) % (playerIds.length);
-                            console.log('aaa: ', roomInfo.currentRound)
-                            console.log('eee: ', roomInfo.playerIds);
-                            console.log('ccc: ', roomInfo.playerIds.split(',')[roomInfo.currentRound])
-                            // console.log('bbb: ', players[roomInfo.playerIds.split(',')[roomInfo.currentRound]])
-                            console.log('fff: ', players[roomInfo.playerIds.split(',')[roomInfo.currentRound]].status)
                             if (players[roomInfo.playerIds.split(',')[roomInfo.currentRound]].status === 'normal') {
-                                console.log('正常通过')
                                 break;
                             }
                         }
@@ -538,8 +488,6 @@ module.exports = class extends Controller {
      * 出售一间房屋或地皮
      */
     async saleHouse() {
-        console.log('====================================')
-        console.log('saleHouse')
         const {
             ctx,
             app,
@@ -556,15 +504,12 @@ module.exports = class extends Controller {
                 let result = '';
                 let area = areas[message.id];
                 if (area.owner == userInfo._id && Number(area.rank) > 0 && area.type == 'place') {
-                    console.log('area: ', area);
 
                     if (Number(area.rank) > 1) {
-                        console.log('1111');
                         areas[message.id].rank = Number(area.rank) - 1;
                         players[userInfo._id].money = Number(players[userInfo._id].money) + area.upgradePrice / 2;
                         result = 'house';
                     } else {
-                        console.log('2222')
                         areas[message.id].rank = 0;
                         areas[message.id].owner = '';
                         players[userInfo._id].money = Number(players[userInfo._id].money) + area.price / 2;
@@ -584,7 +529,6 @@ module.exports = class extends Controller {
                     username: userInfo.username,
                     result: result,
                     area: area,
-                    // houseId: message.id,
                     money: players[userInfo._id].money
                 })
             }
@@ -615,9 +559,7 @@ function calcHouseMoey(areas, userId) {
  */
 async function countDown(countDown, orderId, userId, roomId, nextPlayer, afterRound, app, callback) {
     // 推送够买升级倒计时
-    // let countDown = 20;
     // 标识倒计时，用来消除倒计时
-    // result.orderId = uuid.v1();
     await app.redis.set(orderId, false);
     app.redis.expire(orderId, countDown + 10);
     const nsp = app.io.of('/');
@@ -626,7 +568,6 @@ async function countDown(countDown, orderId, userId, roomId, nextPlayer, afterRo
         // 已处理过则不再计时，清空计时器（已够买或取消够买）
         let isProcessed = await app.redis.get(orderId);
         if (isProcessed == 'false') {
-            // console.log('tt: ', countDown);
             nsp.emit(roomId + '-countDown', {
                 _id: userId,
                 countDown: countDown
@@ -635,7 +576,6 @@ async function countDown(countDown, orderId, userId, roomId, nextPlayer, afterRo
 
             if (countDown < 0) {
                 clearInterval(timer);
-                // console.log('倒计时结束');
                 app.redis.hmset(roomId, {
                     currentRound: afterRound
                 });

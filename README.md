@@ -30,7 +30,7 @@ demo体验地址：http://richman.qiuluo.xin
 
 ## 项目结构
 
-
+![](https://blog.qiuluo.xin/wp-content/uploads/2019/04/M4P6JSZL68B8PHFYT.png)
 
 
 

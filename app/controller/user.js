@@ -24,4 +24,9 @@ module.exports = class extends Controller {
     const payload = ctx.request.body || {};
     return ctx.body = await service.user.update(id, payload);
   }
+  async getGameInfo() {
+    const { ctx, service } = this;
+    const { userId } = ctx.params;
+    return ctx.body = await service.user.getGameInfo(userId);
+  }
 };

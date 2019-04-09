@@ -13,9 +13,11 @@ module.exports = app => {
   router.get('/game/joinRoom/:id', controller.game.joinRoom);
   router.get('/game/startGame/:id', controller.game.startGame);
   router.get('/game/getCurrentAreas/:roomId', controller.game.getCurrentAreas);
+  router.get('/game/getGameResult/:roomId', controller.game.getGameResult);
   router.post('/signup', controller.user.signup);
   router.post('/login', controller.user.login);
   router.get('/user/current', controller.user.current);
+  router.get('/user/getGameInfo/:userId', controller.user.getGameInfo);
   router.get('/test', controller.home.test);
   router.resources('/user', controller.user);
 

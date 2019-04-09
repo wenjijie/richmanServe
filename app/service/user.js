@@ -11,7 +11,9 @@ module.exports = class extends Service {
    */
   async signup(payload) {
     try {
-      let isExist = await this.ctx.model.User.find({ username: payload.username });
+      let isExist = await this.ctx.model.User.find({
+        username: payload.username
+      });
       if (this.ctx.helper.isEmpty(isExist)) {
         payload.password = sha256(payload.password);
         await this.ctx.model.User.create(payload)
@@ -20,7 +22,7 @@ module.exports = class extends Service {
         return this.fail(this.config.result.HAS_EXIST);
       }
     } catch (error) {
-      this.logger.error(error);//打印报错信息
+      this.logger.error(error); //打印报错信息
       return this.fail(this.config.result.EXCEPTION, error.message);
     }
   }
@@ -30,14 +32,16 @@ module.exports = class extends Service {
    */
   async current() {
     try {
-      let userInfo = await this.ctx.model.User.findById(this.ctx.state.userId, { password: 0 });
+      let userInfo = await this.ctx.model.User.findById(this.ctx.state.userId, {
+        password: 0
+      });
       if (!this.ctx.helper.isEmpty(userInfo)) {
         return this.success(userInfo);
       } else {
         return this.fail(this.config.result.USER_NOT_FOUND);
       }
     } catch (error) {
-      this.logger.error(error);//打印报错信息
+      this.logger.error(error); //打印报错信息
       return this.fail(this.config.result.EXCEPTION, error.message);
     }
   }
@@ -50,8 +54,14 @@ module.exports = class extends Service {
     try {
       console.log('pa： ', payload)
       console.log(sha256(payload.password))
-      console.log('sss: ', { username: payload.username, password: sha256(payload.password) })
-      let user = await this.ctx.model.User.findOne({ username: payload.username, password: sha256(payload.password) });
+      console.log('sss: ', {
+        username: payload.username,
+        password: sha256(payload.password)
+      })
+      let user = await this.ctx.model.User.findOne({
+        username: payload.username,
+        password: sha256(payload.password)
+      });
 
       if (!this.ctx.helper.isEmpty(user)) {
         user = JSON.parse(JSON.stringify(user));
@@ -59,7 +69,9 @@ module.exports = class extends Service {
         let token = jwt.sign({
           _id: user._id,
           username: user.username
-        }, this.config.jwt.secretKey, { expiresIn: this.config.jwt.max_token_expire });
+        }, this.config.jwt.secretKey, {
+          expiresIn: this.config.jwt.max_token_expire
+        });
         await this.app.redis.hmset(this.config.redis.prefix + 'token-' + token, user);
         await this.app.redis.expire(this.config.redis.prefix + 'token-' + token, this.config.jwt.token_expire);
 
@@ -70,9 +82,8 @@ module.exports = class extends Service {
       } else {
         return this.fail(this.config.result.LOGIN_FAIL);
       }
-    }
-    catch (error) {
-      this.logger.error(error);//打印报错信息
+    } catch (error) {
+      this.logger.error(error); //打印报错信息
       return this.fail(this.config.result.EXCEPTION, error.message);
     }
   }
@@ -90,6 +101,39 @@ module.exports = class extends Service {
       }
       await this.ctx.model.User.findByIdAndUpdate(_id, payload);
       return this.success();
+    } catch (error) {
+      return this.fail(this.config.result.EXCEPTION, error.message);
+    }
+  }
+
+  /**
+   * 查询用户战绩
+   * @param {String} userId 用户id
+   */
+  async getGameInfo(userId) {
+    try {
+      // let games = await this.ctx.model.Game.find({
+      //   'players.userId': this.app.mongoose.Types.ObjectId(userId)
+      // }, {
+      //   area: 0,
+      //   colors: 0
+      // });
+      let games = await this.ctx.model.Game.aggregate()
+        .unwind({
+          path: '$players'
+        })
+        .match({
+          'players.userId': this.app.mongoose.Types.ObjectId(userId)
+        })
+        .project({
+          area: 0,
+          colors: 0
+        })
+        .sort({
+          createdAt: -1
+        })
+      console.log('aaa', games);
+      return this.success(games);
     } catch (error) {
       return this.fail(this.config.result.EXCEPTION, error.message);
     }

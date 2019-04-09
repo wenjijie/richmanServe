@@ -46,17 +46,17 @@ module.exports = appInfo => {
 
     // cluster 模式下，通过 redis 实现数据共享
     redis: {
-      host: 'qiuluo.xin',
-      port: 6377,
-      // host: '127.0.0.1',
-      // port: 6379,
+      // host: 'qiuluo.xin',
+      // port: 6377,
+      host: '127.0.0.1',
+      port: 6379,
     },
   };
 
   // mongo数据库连接
   config.mongoose = {
-    // url: 'mongodb://127.0.0.1:27017/richman',
-    url: 'mongodb://qiuluo.xin:27019/richman',
+    url: 'mongodb://127.0.0.1:27017/richman',
+    // url: 'mongodb://qiuluo.xin:27019/richman',
     options: {
       useNewUrlParser: true,
       autoReconnect: true,
@@ -68,10 +68,10 @@ module.exports = appInfo => {
   // redis连接
   config.redis = {
     client: {
-      port: 6377,          // Redis port
-      host: 'qiuluo.xin',   // Redis host
-      // port: 6379,          // Redis port
-      // host: '127.0.0.1',   // Redis host
+      // port: 6377,          // Redis port
+      // host: 'qiuluo.xin',   // Redis host
+      port: 6379,          // Redis port
+      host: '127.0.0.1',   // Redis host
       password: '',
       db: 0,
     },

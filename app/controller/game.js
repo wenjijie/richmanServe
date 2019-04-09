@@ -34,6 +34,11 @@ module.exports = class extends Controller {
         const { roomId } = ctx.params || {};
         return ctx.body = await service.game.getCurrentAreas(roomId);
     }
+    async getGameResult() {
+        const { ctx, service } = this;
+        const { roomId } = ctx.params || {};
+        return ctx.body = await service.game.getGameResult(roomId);
+    }
     // async update() {
     //     const { ctx, service } = this;
     //     const { id } = ctx.params;

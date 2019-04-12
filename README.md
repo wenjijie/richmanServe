@@ -1,10 +1,10 @@
-# 大富翁服务端
+# 秋富翁服务端
 
 ## 项目简介
 
 这是一个大富翁游戏项目的后端
 
-前端项目地址：<https://github.com/WhellingQ/richman>
+前端项目地址：<<https://github.com/wenjijie/richman>>
 
 demo体验地址：http://richman.qiuluo.xin
 

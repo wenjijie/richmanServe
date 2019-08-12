@@ -575,7 +575,7 @@ async function countDown(countDown, orderId, userId, roomId, nextPlayer, afterRo
             })
             countDown -= 1;
 
-            if (countDown < 0) {
+            if (countDown < 0 && await app.redis.exists(roomId)) {
                 clearInterval(timer);
                 app.redis.hmset(roomId, {
                     currentRound: afterRound
